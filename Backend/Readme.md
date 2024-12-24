@@ -1,133 +1,213 @@
-# User Registration Endpoint Documentation
+Sure! Here is the complete user API documentation in Markdown format:
 
-## Endpoint: `/api/v1/users/register`
+```markdown
+# User API Documentation
 
-### Method: POST
+This document outlines the API endpoints for managing user accounts.
 
-### Description:
-This endpoint is used to register a new user. It validates the input data, hashes the password, and creates a new user in the database. Upon successful registration, it returns a JSON response containing the user details and an authentication token.
+## Base URL
 
-### Request Body:
-The request body should be a JSON object containing the following fields~:
+All endpoints are relative to the base URL: `/users`
 
-- `fullname`: An object containing the user's first name and last name.
-    - `firstname`: A string with a minimum length of 3 characters (required).
-    - `lastname`: A string (optional).
-- `email`: A string representing the user's email address (required, must be a valid email).
-- `password`: A string with a minimum length of 6 characters (required).
+## Authentication
 
-Example:
+For endpoints requiring authentication (profile and logout), include a Bearer token in the `Authorization` header:  `Authorization: Bearer <token>`
+
+## Endpoints
+
+### 1. Register a New User
+
+**Endpoint:** `/users/register`
+
+**Method:** `POST`
+
+**Request Body:**
+
 ```json
 {
-    "fullname": {
-        "firstname": "John",
-        "lastname": "Doe"
-    },
-    "email": "john.doe@example.com",
-    "password": "password123"
+  "fullname": {
+    "firstname": "John",
+    "lastname": "Doe"
+  },
+  "email": "john.doe@example.com",
+  "password": "password123"
 }
 ```
 
-### Responses:
+**Request Headers:**
 
-#### Success (201 Created):
-- **Description**: User registered successfully.
-### POST /users/login
+`Content-Type: application/json`
 
-**Description:**
-This endpoint allows users to log in to their account by providing their email and password.
+**Response (201 Created):**
 
-**Request Body:**
-- `email` (string, required): The email address of the user. Must be a valid email format.
-- `password` (string, required): The password of the user. Must be at least 6 characters long.
-
-**Response:**
-- **Success (200)**: Returns a JSON object containing the authentication token and user details.
-    - `token` (string): The JWT token for the authenticated user.
-    - `user` (object): The user details.
-        - `fullname` (object): The full name of the user.
-            - `firstname` (string): The first name of the user.
-            - `lastname` (string): The last name of the user.
-        - `email` (string): The email address of the user.
-        - `socketId` (string, optional): The socket ID of the user.
-
-- **Error (401)**: Returns an error message if the email or password is invalid.
-    - `message` (string): "Invalid email or password"
-
-**Example Request:**
-- **Body**:
-    ```json
-    {
-        "status": 201,
-        "data": {
-            "token": "jwt_token_here",
-            "user": {
-                "_id": "user_id_here",
-                "fullname": {
-                    "firstname": "John",
-                    "lastname": "Doe"
-                },
-                "email": "john.doe@example.com"
-            }
-        }
-    }
-    ```
-
-#### Client Error (400 Bad Request):
-- **Description**: Invalid input data or missing required fields.
-- **Body**:
-    ```json
-    {
-        "status": 400,
-        "errors": [
-            {
-                "msg": "Error message here",
-                "param": "parameter_name",
-                "location": "body"
-            }
-        ]
-    }
-    ```
-
-#### Server Error (500 Internal Server Error):
-- **Description**: An error occurred on the server.
-- **Body**:
-    ```json
-    {
-        "status": 500,
-        "message": "Internal Server Error"
-    }
-    ```
-
-### Example Usage:
-```bash
-curl -X POST http://localhost:8000/api/v1/users/register \
--H "Content-Type: application/json" \
--d '{
-    "fullname": {
+```json
+{
+  "status": 201,
+  "data": {
+    "token": "<JWT_TOKEN>",
+    "user": {
+      "_id": "<user_id>",
+      "fullname": {
         "firstname": "John",
         "lastname": "Doe"
-    },
-    "email": "john.doe@example.com",
-    "password": "password123"
-}'
+      },
+      "email": "john.doe@example.com"
+    }
+  },
+  "message": "User registered successfully"
+}
 ```
-/**
- * @route GET /users/profile
- * @desc Get user profile
- * @access Private
- * @returns {Object} 200 - User profile fetched successfully
- * @returns {Error} 401 - Not authorized, token failed
- * @returns {Error} 404 - User not found
- */
 
-/**
- * @route GET /users/logout
- * @desc Logout user
- * @access Private
- * @returns {Object} 200 - User logged out
- * @returns {Error} 401 - Not authorized, token failed
- */
+**Error Responses:**
+
+- **400 Bad Request:**  Validation errors or missing fields. The response body will contain details of the errors. Example: 
+  ```json
+  {
+    "status": 400,
+    "errors": [
+      {
+        "msg": "Email should be at least 6 characters long",
+        "param": "email",
+        "location": "body"
+      }
+    ]
+  }
+  ```
+- **400 Bad Request:** User already exists with this email.
+
+---
+
+### 2. Login
+
+**Endpoint:** `/users/login`
+
+**Method:** `POST`
+
+**Request Body:**
+
+```json
+{
+  "email": "john.doe@example.com",
+  "password": "password123"
+}
+```
+
+**Request Headers:**
+
+`Content-Type: application/json`
+
+**Response (200 OK):**
+
+```json
+{
+  "status": 200,
+  "data": {
+    "token": "<JWT_TOKEN>",
+    "user": {
+      "_id": "<user_id>",
+      "fullname": {
+        "firstname": "John",
+        "lastname": "Doe"
+      },
+      "email": "john.doe@example.com"
+    }
+  },
+  "message": "User logged in"
+}
+```
+
+**Error Responses:**
+
+- **400 Bad Request:** Validation errors or missing fields.
+- **401 Unauthorized:** Invalid email or password.
+
+---
+
+### 3. Get User Profile
+
+**Endpoint:** `/users/profile`
+
+**Method:** `GET`
+
+**Request Headers:**
+
+`Authorization: Bearer <JWT_TOKEN>`
+
+**Response (200 OK):**
+
+```json
+{
+  "status": 200,
+  "data": {
+    "_id": "<user_id>",
+    "fullname": {
+      "firstname": "John",
+      "lastname": "Doe"
+    },
+    "email": "john.doe@example.com"
+  },
+  "message": "User profile fetched successfully"
+}
+```
+
+**Error Responses:**
+
+- **401 Unauthorized:** Invalid or missing token.
+
+---
+
+### 4. Logout
+
+**Endpoint:** `/users/logout`
+
+**Method:** `GET`
+
+**Request Headers:**
+
+`Authorization: Bearer <JWT_TOKEN>`
+
+**Response (200 OK):**
+
+```json
+{
+  "status": 200,
+  "data": {},
+  "message": "User logged out"
+}
+```
+
+**Error Responses:**
+
+- **401 Unauthorized:** Invalid or missing token.
+
+---
+
+## Error Handling
+
+All API responses follow a consistent structure:
+
+```json
+{
+  "status": <HTTP_STATUS_CODE>,
+  "data": <DATA_OBJECT>,
+  "message": <MESSAGE_STRING>
+}
+```
+
+Error responses will include an appropriate HTTP status code and a descriptive message. Validation errors will include details about the specific errors.
+
+---
+
+## Notes
+
+- Passwords are hashed and never transmitted in the response.
+- Token expiration is set to 24 hours.
+
+---
+
+This documentation provides a comprehensive overview of the user API endpoints. Remember to replace placeholders like `<JWT_TOKEN>` and `<user_id>` with actual values.
+```
+
 
  # Captain Routes Documentation
 
