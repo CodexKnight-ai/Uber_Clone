@@ -15,6 +15,10 @@ const registerUser = asyncHandler(async (req, res) => {
   if (!fullname?.firstname || !fullname?.lastname || !email || !password) {
     throw new ApiError(400, "Please fill all the fields");
   }
+  const isUserExist = await userModel.findOne({ email });
+  if (isUserExist) {
+    throw new ApiError(400, "User already exists with this email");
+  }
   const hashedPassword = await userModel.hashPassword(password);
 
   const user = await userModel.create({
