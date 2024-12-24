@@ -18,24 +18,24 @@ const userSchema = new mongoose.Schema({
     unique: true,
     minlength: [6, "Email should be atleast 6 characters long"],
   },
-  password:{
+  password: {
     type: String,
     required: true,
     minlength: [4, "Password should be atleast 6 characters long"],
-    select:false,
+    select: false,
   },
-  socketId:{
-    type:String,
+  socketId: {
+    type: String,
   },
 });
 userSchema.methods.generateAuthToken = function () {
-    const token=jwt.sign({_id:this._id},process.env.JWT_SECRET);
-    return token;
+  const token = jwt.sign({ _id: this._id }, process.env.JWT_SECRET,{expiresIn:"24h"});
+  return token;
 };
 userSchema.methods.comparePassword = async function (enteredPassword) {
-    return await bcrypt.compare(enteredPassword, this.password);
+  return await bcrypt.compare(enteredPassword, this.password);
 };
 userSchema.statics.hashPassword = async function (password) {
-    return await bcrypt.hash(password, 10);
+  return await bcrypt.hash(password, 10);
 };
-export const userModel=mongoose.model("User",userSchema);  
+export const userModel = mongoose.model("User", userSchema);
