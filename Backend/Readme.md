@@ -1,6 +1,3 @@
-Sure! Here is the complete user API documentation in Markdown format:
-
-```markdown
 # User API Documentation
 
 This document outlines the API endpoints for managing user accounts.
@@ -206,8 +203,8 @@ Error responses will include an appropriate HTTP status code and a descriptive m
 ---
 
 This documentation provides a comprehensive overview of the user API endpoints. Remember to replace placeholders like `<JWT_TOKEN>` and `<user_id>` with actual values.
-```
 
+---
 
  # Captain Routes Documentation
 
