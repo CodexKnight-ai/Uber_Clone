@@ -45,10 +45,14 @@ const registerCaptain = asyncHandler(async (req, res) => {
 
   const token = captain.generateAuthToken();
   res.status(201).json(
-    new ApiResponse(true, "Captain registered successfully", {
-      captain,
-      token,
-    })
+    new ApiResponse(
+      201,
+      {
+        captain,
+        token,
+      },
+      "Captain registered successfully"
+    )
   );
 });
 
@@ -65,22 +69,22 @@ const loginCaptain = asyncHandler(async (req, res) => {
   const token = captain.generateAuthToken();
   res.cookie("token", token);
   res
-    .status(200)
-    .json(new ApiResponse(true, "Captain logged in", { captain, token }));
+    .status(201)
+    .json(new ApiResponse(201, { captain, token }, "Captain logged in"));
 });
 const getCaptainProfile = asyncHandler(async (req, res) => {
   return res
-    .status(200)
+    .status(201)
     .json(
-      new ApiResponse(true, "Captain profile fetched successfully", req.captain)
+      new ApiResponse(201, req.captain, "Captain profile fetched successfully")
     );
 });
 
-const logoutCaptain=asyncHandler(async(req,res)=>{
-  const token=req.cookies.token||req.headers.authorization.split(" ")[1];
+const logoutCaptain = asyncHandler(async (req, res) => {
+  const token = req.cookies.token || req.headers.authorization.split(" ")[1];
   res.clearCookie("token");
-  await BlacklistToken.create({token});
-  res.status(200).json(new ApiResponse(true,"Captain logged out"));
+  await BlacklistToken.create({ token });
+  res.status(201).json(new ApiResponse(201, "Captain logged out"));
 });
 
-export { registerCaptain, loginCaptain, getCaptainProfile,logoutCaptain };
+export { registerCaptain, loginCaptain, getCaptainProfile, logoutCaptain };

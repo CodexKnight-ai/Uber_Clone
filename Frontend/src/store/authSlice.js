@@ -1,26 +1,7 @@
-import { createSlice } from "@reduxjs/toolkit";
-const storedUser = localStorage.getItem("user");
-console.log(storedUser);
-const initialState = {
-    status:storedUser? "logged in" : "logged out",
-    user: storedUser? JSON.parse(storedUser) : null
-};
+// import { combineReducers } from "@reduxjs/toolkit";
+// import captainReducer from "./captainSlice.js"
+// import userReducer from "./userSlice.js"
 
-const authSlice = createSlice({
-    name: "auth",
-    initialState,
-    reducers: {
-        login(state, action) {
-            state.status = "logged in";
-            state.user = action.payload;
-            localStorage.setItem("user", JSON.stringify(action.payload));
-        },
-        logout(state) {
-            state.status = "logged out";
-            state.user = null;
-            localStorage.removeItem("user");
-        }
-    }
-});
-export const { login, logout } = authSlice.actions;
-export default authSlice.reducer;
+// const authReducer=combineReducers({
+//     user:userReducer
+// })

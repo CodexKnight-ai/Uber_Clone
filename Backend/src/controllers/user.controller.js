@@ -65,8 +65,19 @@ const getUserProfile = asyncHandler(async (req, res) => {
 const logoutUser = asyncHandler(async (req, res) => {
   const token = req.cookies.token || req.headers.authorization.split(" ")[1];
   res.clearCookie("token");
-  await BlacklistToken.create({ token });
-  res.status(200).json(new ApiResponse(200, {}, "User logged out"));
+
+  // Avoid duplicate key error by using upsert
+  try {
+    await BlacklistToken.updateOne(
+      { token }, 
+      { token },
+      { upsert: true } 
+    );
+    res.status(200).json(new ApiResponse(200, {}, "User logged out"));
+  } catch (error) {
+    console.error("Error blacklisting token:", error);
+    throw new ApiError(500, "Error logging out the user");
+  }
 });
 
-export { registerUser, loginUser, getUserProfile,logoutUser };
+export { registerUser, loginUser, getUserProfile, logoutUser };

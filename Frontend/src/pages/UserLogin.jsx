@@ -1,16 +1,17 @@
-import React, { useState, useContext } from 'react'
+import React, { useState} from 'react'
 import { Link } from 'react-router-dom'
-import { UserDataContext } from '../context/UserContext'
+// import { UserDataContext } from '../context/UserContext'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import { useDispatch } from 'react-redux'
+import { login } from '../store/userSlice.js'
 
 const UserLogin = () => {
   const [ email, setEmail ] = useState('')
   const [ password, setPassword ] = useState('')                    
 
-  const { user, setUser } = useContext(UserDataContext)
   const navigate = useNavigate()
-
+  const dispatch=useDispatch();
 
 
   const submitHandler = async (e) => {
@@ -24,14 +25,10 @@ const UserLogin = () => {
     const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/users/login`, userData)
 
     if (response.status === 201) {
-      console.log(response);
-      const data = response.data
-      setUser(data.user)
-      localStorage.setItem('token', data.token)
+      const data = response.data.data;
+      dispatch(login(data));      
       navigate('/user/home')
     }
-
-
     setEmail('')
     setPassword('')
   }

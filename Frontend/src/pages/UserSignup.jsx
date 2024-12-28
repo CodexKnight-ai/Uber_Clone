@@ -1,18 +1,18 @@
-import React, { useState, useContext } from 'react'
+import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
-import { UserDataContext } from '../context/UserContext'
+import { useDispatch } from 'react-redux'
+import { login } from '../store/userSlice.js'
 
 function UserSignup() {
   const [ email, setEmail ] = useState('')
   const [ password, setPassword ] = useState('')
   const [ firstName, setFirstName ] = useState('')
   const [ lastName, setLastName ] = useState('')
-  const [ userData, setUserData ] = useState({})
+
 
   const navigate = useNavigate();
-
-  const {user,setUser}=useContext(UserDataContext);
+  const dispatch = useDispatch();
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -34,9 +34,8 @@ function UserSignup() {
 
       if (response.status === 201) {
         console.log(response);
-        const data = response.data;
-        setUser(data.user);
-        localStorage.setItem('token', data.token)      
+        const data = response.data.data;
+        dispatch(login(data));      
         navigate("/user/home"); 
       }
 
