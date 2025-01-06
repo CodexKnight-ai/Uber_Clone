@@ -6,8 +6,8 @@ function AuthProtected({children,current}) {
     const user=useSelector((state)=>state.user.isAuthenticated);
     const captain=useSelector((state)=>state.captain.isAuthenticated);
     const navigate=useNavigate();
-    console.log("user:",user);
-    console.log("captain:",captain);
+    // console.log("user:",user);
+    // console.log("captain:",captain);
     useEffect(()=>{
         if(user && !captain){
             navigate("/user/home");
